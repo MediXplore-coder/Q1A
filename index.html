@@ -1,8 +1,9 @@
                                                                                                                                                       <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz: Atmungssystem</title>
+  <title>Quiz: Aterien und Venen</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -63,7 +64,8 @@
     .navigation {
       display: none;
       margin-top: 20px;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 20px; /* Abstand zwischen den Buttons */
     }
     .navigation button {
       padding: 12px 24px;
@@ -85,55 +87,133 @@
       color: #004d40;
       margin-top: 20px;
     }
+    .level-auswahl {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px; /* Nach oben verschieben */
+    }
+    .level-auswahl button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #00796b;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .level-auswahl button:hover {
+      background-color: #004d40;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Quiz: Atmungssystem</h2>
-    <div class="frage" id="frage"></div>
-    <div class="antworten" id="antworten"></div>
+    <div class="level-auswahl" id="level-auswahl">
+      <button onclick="startQuiz('leicht')">Leicht</button>
+      <button onclick="startQuiz('mittel')">Mittel</button>
+      <button onclick="startQuiz('schwer')">Schwer</button>
+    </div>
+    <div class="frage" id="frage" style="display: none;"></div>
+    <div class="antworten" id="antworten" style="display: none;"></div>
     <div class="ergebnis" id="ergebnis"></div>
     <div class="navigation" id="navigation">
       <button onclick="restart()">Wiederholen</button>
-      <button onclick="goBack()">Zurück</button>
+      <button onclick="Levels()">Levels</button>
     </div>
   </div>
   <script>
-    const questions = [
-        { question: "Wie viele Lungenflügel hat der Mensch?", answers: ["1", "2", "3", "4"], correct: 1 },
-        { question: "Was ist die Hauptaufgabe der Bronchien?", answers: ["Gasaustausch", "Transport der Atemluft zu den Alveolen", "Produktion von Surfactant", "Regulation der Herzfrequenz"], correct: 1 },
-        { question: "Wie nennt man die Gesamtheit der Atemwege von Nase bis zu den Bronchien?", answers: ["Lungenkreislauf", "Respirationstrakt", "Bronchialsystem", "Pulmonalsystem"], correct: 1 },
-        { question: "Was ist die Hauptfunktion der Trachea?", answers: ["Filterung des Blutes", "Regulation des Blutdrucks", "Leitung der Luft in die Bronchien", "Produktion von Schleim"], correct: 2 },
-        { question: "Welche Art von Muskelgewebe steuert die Weite der Bronchien?", answers: ["Quergestreifte Muskulatur", "Glatte Muskulatur", "Herzmuskulatur", "Skelettmuskulatur"], correct: 1 },
-        { question: "Welches Gas wird mit der Ausatmung hauptsächlich ausgeschieden?", answers: ["Sauerstoff", "Kohlendioxid", "Stickstoff", "Helium"], correct: 1 },
-        { question: "Welches Volumen umfasst die gesamte Luft, die nach maximaler Ein- und Ausatmung in die Lunge passt?", answers: ["Atemzugvolumen", "Residualvolumen", "Vitalkapazität", "Funktionelle Residualkapazität"], correct: 2 },
-        { question: "Wie nennt man die Lunge umgebende Flüssigkeit, die Reibung beim Atmen verhindert?", answers: ["Synovialflüssigkeit", "Lungenflüssigkeit", "Pleuraerguss", "Pleuraflüssigkeit"], correct: 3 },
-        { question: "Welche Funktion hat der Hering-Breuer-Reflex?", answers: ["Regulation der Herzfrequenz", "Verhinderung einer Überdehnung der Lunge", "Steigerung der Atemfrequenz", "Kontrolle des Blutdrucks"], correct: 1 },
-        { question: "Welcher Nerv spielt eine zentrale Rolle bei der Steuerung des Zwerchfells?", answers: ["Vagusnerv", "Phrenicusnerv", "Trigeminusnerv", "Hypoglossusnerv"], correct: 1 },
-        { question: "Was passiert bei einer Sauerstoffsättigung im Blut unter 90 %?", answers: ["Die Atmung wird langsamer", "Das Gehirn erhält zu wenig Sauerstoff", "Der CO₂-Gehalt im Blut steigt", "Die Lunge produziert mehr Surfactant"], correct: 1 },
-        { question: "Welche Art von Atemmechanismus tritt bei schwerer Azidose auf?", answers: ["Kussmaul-Atmung", "Cheyne-Stokes-Atmung", "Biot-Atmung", "Schnappatmung"], correct: 0 },
-        { question: "Wie nennt man die maximale Luftmenge, die nach normaler Einatmung noch zusätzlich eingeatmet werden kann?", answers: ["Residualvolumen", "Inspiratorisches Reservevolumen", "Exspiratorisches Reservevolumen", "Atemzugvolumen"], correct: 1 },
-        { question: "Was passiert bei einer obstruktiven Lungenerkrankung mit der Ausatmung?", answers: ["Sie ist normal", "Sie ist verlängert und erschwert", "Sie erfolgt zu schnell", "Sie stoppt plötzlich"], correct: 1 },
-        { question: "Welcher Teil des Gehirns reguliert unbewusst die Atemfrequenz?", answers: ["Kleinhirn", "Medulla oblongata", "Thalamus", "Hypothalamus"], correct: 1 },
-        { question: "Welche Atmung tritt bei Herzinsuffizienz typischerweise auf?", answers: ["Cheyne-Stokes-Atmung", "Kussmaul-Atmung", "Biot-Atmung", "Apnoe"], correct: 0 },
-        { question: "Welcher Bestandteil des Blutes bindet Sauerstoff für den Transport?", answers: ["Leukozyten", "Hämoglobin", "Albumin", "Thrombozyten"], correct: 1 },
-        { question: "Welche Lungenerkrankung ist durch überblähte Alveolen und reduzierte Elastizität gekennzeichnet?", answers: ["Emphysem", "Bronchitis", "Lungenfibrose", "Pneumonie"], correct: 0 },
-        { question: "Welche Art von Rezeptoren erkennen einen niedrigen Sauerstoffgehalt im Blut?", answers: ["Mechanorezeptoren", "Chemorezeptoren", "Photorezeptoren", "Nozizeptoren"], correct: 1 },
-        { question: "Welches Organ wird durch eine pulmonale Hypertonie besonders belastet?", answers: ["Leber", "Herz", "Milz", "Niere"], correct: 1 },
-        { question: "Was bedeutet eine restriktive Lungenerkrankung?", answers: ["Verengung der Atemwege", "Eingeschränkte Dehnbarkeit der Lunge", "Übermäßige Schleimproduktion", "Unkontrollierte Muskelkontraktion"], correct: 1 },
-        { question: "Welche Struktur ist bei einer Kehlkopfentzündung betroffen?", answers: ["Larynx", "Trachea", "Pharynx", "Bronchien"], correct: 0 },
-        { question: "Welcher pH-Wert im Blut ist normal?", answers: ["6,5–6,9", "7,35–7,45", "7,8–8,2", "8,5–9,0"], correct: 1 },
-        { question: "Wie nennt man eine verringerte Sauerstoffkonzentration im Blut?", answers: ["Hyperkapnie", "Hypoxämie", "Hypotonie", "Hyperventilation"], correct: 1 },
-        { question: "Was geschieht bei einer Lungenembolie?", answers: ["Eine Verengung der Bronchien", "Ein Blutgerinnsel blockiert eine Lungenarterie", "Eine Infektion der Bronchien", "Ein Kollaps der Lunge"], correct: 1 },
-        { question: "Welches Hormon ist bei Stress erhöht und führt zu einer schnelleren Atmung?", answers: ["Insulin", "Adrenalin", "Melatonin", "Prolaktin"], correct: 1 },
-        { question: "Was kann eine mögliche Ursache für eine metabolische Azidose sein?", answers: ["Lungenentzündung", "Nierenversagen", "Hyperventilation", "Bluthochdruck"], correct: 1 },
-        { question: "Wie nennt man eine plötzliche und unkontrollierte Kontraktion des Zwerchfells?", answers: ["Singultus (Schluckauf)", "Bronchospasmus", "Hyperkapnie", "Zyanose"], correct: 0 },
-        { question: "Welche Erkrankung ist durch eine Lungenfibrose gekennzeichnet?", answers: ["Verlust der Lungenelastizität durch Bindegewebsvermehrung", "Überproduktion von Schleim in den Bronchien", "Akute Infektion der Lungenbläschen", "Verminderte Produktion von Surfactant"], correct: 0 },
-        { question: "Welche Lungenstruktur sorgt für den effizienten Austausch von Sauerstoff und Kohlendioxid?", answers: ["Bronchien", "Alveolen", "Trachea", "Pleura"], correct: 1 } 
-    ];
+    const allQuestions = [
+       { question: "Welche Hauptfunktion haben die Arterien im menschlichen Körper?", answers: ["Sie transportieren sauerstoffarmes Blut zum Herzen", "Sie transportieren sauerstoffreiches Blut vom Herzen zu den Organen", "Sie filtern das Blut und reinigen es von Giftstoffen", "Sie speichern Blut für Notfallsituationen"], correct: 1, level: "einfach" },
+{ question: "Wie lassen sich die Arterien des Körpers einteilen?", answers: ["Nach Körperregionen", "Nach Blutdruckniveau", "Nach ihrer Länge", "Nach ihrer Elastizität"], correct: 0, level: "einfach" },
+{ question: "Welche Arterie teilt sich in die A. carotis interna und A. carotis externa?", answers: ["A. subclavia", "A. vertebralis", "A. carotis communis", "A. thyroidea superior"], correct: 2, level: "mittel" },
+{ question: "Welche Arterie versorgt das hintere Gehirn?", answers: ["A. carotis externa", "A. vertebralis", "A. thyroidea superior", "A. brachialis"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt die Schilddrüse?", answers: ["A. subclavia", "A. brachiocephalica", "A. thyroidea superior", "A. carotis interna"], correct: 2, level: "mittel" },
+{ question: "Welche Arterie ist die Hauptschlagader des Körpers?", answers: ["A. subclavia", "Aorta", "A. pulmonalis", "A. carotis communis"], correct: 1, level: "einfach" },
+{ question: "Welche Arterie führt sauerstoffarmes Blut vom rechten Herzen zur Lunge?", answers: ["A. pulmonalis", "A. mesenterica superior", "A. subclavia", "A. femoralis"], correct: 0, level: "einfach" },
+{ question: "Welche Arterie teilt sich in die A. subclavia und A. carotis communis?", answers: ["A. iliaca communis", "A. pulmonalis", "A. brachiocephalica", "A. renalis"], correct: 2, level: "mittel" },
+{ question: "Welche Arterie versorgt den Magen, die Leber und die Milz?", answers: ["A. mesenterica inferior", "A. renalis", "A. celiaca", "A. pulmonalis"], correct: 2, level: "mittel" },
+{ question: "Welche Arterie versorgt den Dünndarm und Teile des Dickdarms?", answers: ["A. tibialis anterior", "A. mesenterica superior", "A. brachialis", "A. vertebralis"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt die Nieren?", answers: ["A. splenica", "A. renalis", "A. carotis communis", "A. tibialis posterior"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt den unteren Teil des Dickdarms?", answers: ["A. mesenterica inferior", "A. mesenterica superior", "A. iliaca externa", "A. tibialis anterior"], correct: 0, level: "mittel" },
+{ question: "Welche Arterie entsteht aus der A. iliaca externa?", answers: ["A. tibialis posterior", "A. femoralis", "A. axillaris", "A. radialis"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt das Kniegelenk?", answers: ["A. tibialis posterior", "A. femoralis", "A. poplitea", "A. brachiocephalica"], correct: 2, level: "mittel" },
+{ question: "Welche Arterie führt das Blut in die vordere Beinregion?", answers: ["A. tibialis anterior", "A. subclavia", "A. mesenterica superior", "A. pulmonalis"], correct: 0, level: "mittel" },
+{ question: "Welche Arterie führt das Blut in die hintere Beinregion und zum Fuß?", answers: ["A. renalis", "A. tibialis posterior", "A. carotis externa", "A. brachialis"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt den Arm und geht in die A. axillaris über?", answers: ["A. subclavia", "A. femoralis", "A. iliaca communis", "A. mesenterica inferior"], correct: 0, level: "mittel" },
+{ question: "Welche Arterie versorgt die Schulter und den oberen Arm?", answers: ["A. brachialis", "A. axillaris", "A. tibialis posterior", "A. carotis interna"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt die Daumenseite des Unterarms?", answers: ["A. brachialis", "A. radialis", "A. femoralis", "A. mesenterica superior"], correct: 1, level: "mittel" },
+{ question: "Welche Arterie versorgt die Kleinfingerseite des Unterarms?", answers: ["A. ulnaris", "A. axillaris", "A. tibialis anterior", "A. pulmonalis"], correct: 0, level: "mittel" },
+{ question: "Welche Schicht der Arterienwand enthält glatte Muskulatur?", answers: ["Tunica adventitia", "Tunica media", "Tunica intima", "Endothel"], correct: 1, level: "schwer" },
+{ question: "Welche Arterienart ist für die Blutdruckregulation am wichtigsten?", answers: ["Elastische Arterien", "Muskuläre Arterien", "Kapillaren", "Venen"], correct: 1, level: "schwer" },
+{ question: "Was passiert mit dem Blutdruck, wenn sich eine Arterie verengt (Vasokonstriktion)?", answers: ["Er sinkt", "Er bleibt gleich", "Er steigt", "Er wird null"], correct: 2, level: "schwer" },
+{ question: "Welche der folgenden Arterien ist keine paarige Arterie?", answers: ["A. mesenterica superior", "A. renalis", "A. iliaca communis", "A. subclavia"], correct: 0, level: "schwer" },
+{ question: "Welche Aussage über Arterien ist korrekt?", answers: ["Alle Arterien transportieren sauerstoffreiches Blut", "Arterien haben dünnere Wände als Venen", "Arterien transportieren Blut vom Herzen weg", "Arterien enthalten Klappen wie Venen"], correct: 2, level: "schwer" },
+{ question: "Welche Arterie zieht durch den Canalis caroticus in den Schädel?", answers: ["A. carotis externa", "A. carotis interna", "A. subclavia", "A. temporalis superficialis"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie versorgt Gesicht und Kaumuskulatur?", answers: ["A. facialis", "A. carotis interna", "A. vertebralis", "A. ophthalmica"], correct: 0, level: "schwer" },
+{ question: "Welche Arterie ist ein direkter Ast der A. carotis externa?", answers: ["A. cerebri media", "A. thyroidea inferior", "A. maxillaris", "A. vertebralis"], correct: 2, level: "schwer" },
+{ question: "Die A. basilaris entsteht durch Vereinigung welcher Arterien?", answers: ["A. carotis externa", "A. cerebri posterior", "Aa. vertebrales", "A. temporalis"], correct: 2, level: "schwer" },
+{ question: "Welcher Gefäßkreis sorgt für die Kollateralversorgung des Gehirns?", answers: ["Sinus cavernosus", "Pfortaderkreislauf", "Circulus arteriosus Willisii", "Lymphsystem"], correct: 2, level: "schwer" },
+{ question: "Welche Arterie versorgt die mediale Seite des Frontallappens?", answers: ["A. cerebri posterior", "A. cerebri anterior", "A. cerebri media", "A. basilaris"], correct: 1, level: "schwer" },
+{ question: "Welcher Ast geht direkt aus der Aorta thoracica hervor?", answers: ["A. carotis communis", "A. intercostalis posterior", "A. mesenterica inferior", "A. femoralis"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie versorgt das Zwerchfell?", answers: ["A. iliaca externa", "A. phrenica inferior", "A. mesenterica superior", "A. radialis"], correct: 1, level: "schwer" },
+{ question: "Die A. hepatica propria versorgt welches Organ direkt?", answers: ["Milz", "Niere", "Leber", "Magen"], correct: 2, level: "schwer" },
+{ question: "Welcher Ast der A. celiaca zieht zur Milz?", answers: ["A. gastrica sinistra", "A. splenica", "A. mesenterica inferior", "A. hepatica communis"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie geht aus der A. iliaca interna hervor?", answers: ["A. femoralis", "A. sacralis mediana", "A. obturatoria", "A. epigastrica inferior"], correct: 2, level: "schwer" },
+{ question: "Welche Arterie versorgt die Beckenorgane?", answers: ["A. iliaca externa", "A. iliaca interna", "A. femoralis", "A. tibialis posterior"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie setzt sich aus der A. poplitea in der Tiefe des Unterschenkels fort?", answers: ["A. tibialis anterior", "A. radialis", "A. axillaris", "A. carotis interna"], correct: 0, level: "schwer" },
+{ question: "Die A. dorsalis pedis ist ein Endast welcher Arterie?", answers: ["A. tibialis posterior", "A. tibialis anterior", "A. femoralis", "A. iliaca communis"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie verläuft hinter dem Innenknöchel?", answers: ["A. dorsalis pedis", "A. tibialis anterior", "A. tibialis posterior", "A. radialis"], correct: 2, level: "schwer" },
+{ question: "Welche Arterie befindet sich in der Ellenbeuge und teilt sich dort auf?", answers: ["A. axillaris", "A. brachialis", "A. ulnaris", "A. tibialis anterior"], correct: 1, level: "schwer" },
+{ question: "Welche Arterie kann zur Pulsmessung am Handgelenk verwendet werden?", answers: ["A. radialis", "A. axillaris", "A. subclavia", "A. ulnaris"], correct: 0, level: "schwer" },
+{ question: "Welche Arterie versorgt den Ellenbogenbereich?", answers: ["A. cubitalis", "Rete articulare cubiti", "A. tibialis anterior", "A. phrenica inferior"], correct: 1, level: "schwer" },
+{ question: "Was versteht man unter einer Aneurysma?", answers: ["Ein Verschluss einer Vene", "Eine krankhafte Erweiterung einer Arterie", "Eine Entzündung der Lymphgefäße", "Ein Blutstau im rechten Herzen"], correct: 1, level: "schwer" },
+{ question: "Was ist typisch für die Arteriosklerose?", answers: ["Abbau der Muskulatur in der Arterienwand", "Einlagerung von Fett und Verkalkung der Gefäßwände", "Vermehrung von Kapillaren", "Erweiterung der Venenklappen"], correct: 1, level: "schwer" },
+{ question: "Welche Gefäße führen Blut vom Herzen weg?", answers: ["Venen", "Kapillaren", "Arterien", "Lymphgefäße"], correct: 2, level: "leicht" },
+{ question: "Welche Gefäße führen Blut zum Herzen hin?", answers: ["Venen", "Arterien", "Kapillaren", "Lymphbahnen"], correct: 0, level: "leicht" },
+{ question: "Welche Gefäße haben in der Regel eine dickere Wand?", answers: ["Venen", "Arterien", "Lymphgefäße", "Kapillaren"], correct: 1, level: "leicht" }, { question: "Wo ist der Blutdruck am höchsten?", answers: ["In den Arterien", "In den Venen", "In den Kapillaren", "Im Herzen"], correct: 0, level: "leicht" },
+{ question: "Welche Gefäße haben Klappen, um den Rückfluss zu verhindern?", answers: ["Arterien", "Venen", "Kapillaren", "Alle"], correct: 1, level: "leicht" },
+{ question: "Wo kann man den Puls am besten tasten?", answers: ["An Arterien", "An Venen", "An Kapillaren", "Am Herz"], correct: 0, level: "leicht" },
+{ question: "Welche Arterie ist die größte im Körper?", answers: ["A. pulmonalis", "Aorta", "A. carotis", "A. femoralis"], correct: 1, level: "leicht" },
+{ question: "Welche Vene transportiert sauerstoffreiches Blut?", answers: ["V. cava inferior", "Vv. pulmonales", "V. saphena", "V. jugularis interna"], correct: 1, level: "leicht" },
+{ question: "Welche Arterie transportiert sauerstoffarmes Blut?", answers: ["A. pulmonalis", "A. carotis", "A. femoralis", "A. axillaris"], correct: 0, level: "leicht" },
+{ question: "Welche Venen führen sauerstoffarmes Blut zum Herzen zurück?", answers: ["V. cava superior und inferior", "Vv. pulmonales", "A. carotis und Aorta", "V. portae"], correct: 0, level: "leicht" },
+{ question: "Wie nennt man das feine Netzwerk zwischen Arterien und Venen?", answers: ["Arteriolen", "Venolen", "Kapillaren", "Plexus"], correct: 2, level: "leicht" },
+{ question: "Welche Aufgabe haben Kapillaren?", answers: ["Puls messen", "Blut speichern", "Stoffaustausch", "Blut filtern"], correct: 2, level: "leicht" },
+{question: "In welchem Gefäßtyp ist der Blutdruck am niedrigsten?", answers: ["Arterie", "Kapillare", "Vene", "Aorta"], correct: 2, level: "leicht" },
+{ question: "Welche Vene befindet sich im Arm?", answers: ["A. brachialis", "V. cephalica", "V. portae", "V. femoralis"], correct: 1, level: "leicht" },
+{ question: "Welche Vene liegt gut sichtbar auf dem Handrücken?", answers: ["V. jugularis", "V. saphena", "V. dorsalis manus", "V. axillaris"], correct: 2, level: "leicht" },
+{ question: "Welche Vene wird häufig zur Blutabnahme genutzt?", answers: ["V. saphena magna", "V. mediana cubiti", "V. axillaris", "V. femoralis"], correct: 1, level: "leicht" },
+{ question: "Welche Arterie kann man im Halsbereich tasten?", answers: ["A. axillaris", "A. carotis", "A. femoralis", "A. pulmonalis"], correct: 1, level: "leicht" },
+{ question: "Welche Vene drainiert das Blut aus dem Kopf?", answers: ["V. subclavia", "V. jugularis interna", "V. brachiocephalica", "V. cephalica"], correct: 1, level: "leicht" },
+{ question: "Was ist die Hauptfunktion der Venenklappen?", answers: ["Sauerstoff transportieren", "Blutdruck erzeugen", "Rückfluss des Blutes verhindern", "Herzschlag auslösen"], correct: 2, level: "leicht" },
+{ question: "Welche Gefäße enthalten am meisten Blut im Körper?", answers: ["Arterien", "Venen", "Kapillaren", "Lymphbahnen"], correct: 1, level: "leicht" },
+{ question: "Welche Arterie versorgt das Bein?", answers: ["A. radialis", "A. femoralis", "A. carotis", "A. subclavia"], correct: 1, level: "leicht" },
+{ question: "Welche Vene verläuft oberflächlich am Bein?", answers: ["V. jugularis", "V. saphena magna", "V. basilica", "V. brachiocephalica"], correct: 1, level: "leicht" },
+{ question: "Welche Gefäße transportieren Nährstoffe zu den Zellen?", answers: ["Kapillaren", "Arterien", "Venen", "Lymphgefäße"], correct: 0, level: "leicht" },
+{ question: "Wie heißt das Gefäßsystem, das die Leber mit dem Darm verbindet?", answers: ["Lymphsystem", "Kreislaufzentrum", "Pfortadersystem (V. portae)", "Herz-Lungen-System"], correct: 2, level: "leicht" },
+{ question: "Wo findet man den größten Gefäßquerschnitt im Körper?", answers: ["In der Aorta", "In den Kapillaren", "In den Venen", "In der V. cava"], correct: 1, level: "leicht" },
+{ question: "Welche Arterie versorgt die Leber?", answers: ["A. renalis", "A. femoralis", "A. hepatica", "A. pulmonalis"], correct: 2, level: "leicht" },
+{ question: "Welche Arterie versorgt den Arm?", answers: ["A. tibialis", "A. carotis", "A. brachialis", "A. renalis"], correct: 2, level: "leicht" },
+{ question: "Welche Vene führt das Blut aus dem Bein zum Herzen zurück?", answers: ["V. radialis", "V. femoralis", "V. portae", "V. axillaris"], correct: 1, level: "leicht" },
+{ question: "Wie nennt man Arterien kleiner werdender Durchmesser?", answers: ["Arteriolen", "Venolen", "Kapillaren", "Mikrovaskulatur"], correct: 0, level: "leicht" },
+{ question: "Wie heißen die kleinen Venen, die Blut aus den Kapillaren sammeln?", answers: ["Arteriolen", "Venolen", "Venae", "Lymphknoten"], correct: 1, level: "leicht" }
+ ];
+    let questions = [];
     let used = [];
     let correctCount = 0;
     let askedCount = 0;
+
+    function startQuiz(selectedLevel) {
+      questions = allQuestions.filter(q => q.level === selectedLevel);
+      document.getElementById('level-auswahl').style.display = 'none';
+      document.getElementById('frage').style.display = 'block';
+      document.getElementById('antworten').style.display = 'flex';
+      showNext();
+    }
 
     function getRandomIndex() {
       if (used.length === questions.length) used = [];
@@ -189,18 +269,21 @@
       used = [];
       correctCount = 0;
       askedCount = 0;
-      document.getElementById('frage').style.display = 'block';
-      document.getElementById('antworten').style.display = 'flex';
       document.getElementById('ergebnis').style.display = 'none';
       document.getElementById('navigation').style.display = 'none';
-      showNext();
+      startQuiz(questions[0].level); // Restart with the same level
     }
 
-    function goBack() {
-      window.history.back();
+    function Levels() {
+      used = [];
+      correctCount = 0;
+      askedCount = 0;
+      document.getElementById('frage').style.display = 'none';
+      document.getElementById('antworten').style.display = 'none';
+      document.getElementById('ergebnis').style.display = 'none';
+      document.getElementById('navigation').style.display = 'none';
+      document.getElementById('level-auswahl').style.display = 'flex';
     }
-
-    showNext();
   </script>
 </body>
 </html>
