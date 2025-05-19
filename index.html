@@ -5,24 +5,26 @@
   <title>Quiz: Aterien und Venen</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #e0f7fa;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      width: 95%;
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 90vh;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e0f7fa;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding: 20px;
+}
+.container {
+  width: 95%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  max-height: 95vh;
+  overflow-y: auto;
+}ght: 90vh;
     }
     h2 {
       color: #004d40;
@@ -80,12 +82,20 @@
       background-color: #00332b;
     }
     .ergebnis {
-      display: none;
-      text-align: center;
-      font-size: 22px;
-      color: #004d40;
-      margin-top: 20px;
-    }
+  display: none;
+  text-align: left;
+  font-size: 18px;
+  color: #004d40;
+  margin-top: 20px;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+.ergebnis ul {
+  padding-left: 20px;
+}
+.ergebnis li {
+  margin-bottom: 10px;
+}
     .level-auswahl {
       display: flex;
       flex-direction: column;
