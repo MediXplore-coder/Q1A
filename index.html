@@ -125,6 +125,8 @@
     </div>
   </div>
   <script>
+    let wrongAnswers = [];
+
     const allQuestions = [
 { question: "Welche Hauptfunktion haben die Arterien im menschlichen Körper?", answers: ["Sie transportieren sauerstoffarmes Blut zum Herzen", "Sie transportieren sauerstoffreiches Blut vom Herzen zu den Organen", "Sie filtern das Blut und reinigen es von Giftstoffen", "Sie speichern Blut für Notfallsituationen"], correct: 1, level: "leicht" },
 { question: "Wie lassen sich die Arterien des Körpers einteilen?", answers: ["Nach Körperregionen", "Nach Blutdruckniveau", "Nach ihrer Länge", "Nach ihrer Elastizität"], correct: 0, level: "leicht" },
@@ -329,36 +331,56 @@
       q.answers.forEach((ans, i) => {
         const btn = document.createElement('button');
         btn.textContent = ans;
-        btn.onclick = () => {
-          if (i === q.correct) {
-            btn.classList.add('correct');
-            correctCount++;
-          } else {
-            btn.classList.add('wrong');
-            setTimeout(() => {
-              Array.from(container.children)[q.correct].classList.add('correct');
-            }, 100);
-          }
-          setTimeout(showNext, 1000);
-        };
+btn.onclick = () => {
+  if (i === q.correct) {
+    btn.classList.add('correct');
+    correctCount++;
+  } else {
+    btn.classList.add('wrong');
+    wrongAnswers.push({
+      question: q.question,
+      selected: q.answers[i],
+      correct: q.answers[q.correct]
+    });
+
+    setTimeout(() => {
+      Array.from(container.children)[q.correct].classList.add('correct');
+    }, 100);
+  }
+  setTimeout(showNext, 1000);
+};
         container.appendChild(btn);
       });
     }
 
-    function showResult() {
-      document.getElementById('frage').style.display = 'none';
-      document.getElementById('antworten').style.display = 'none';
-      const percent = Math.round((correctCount / askedCount) * 100);
-      document.getElementById('ergebnis').textContent =
-        `Du hast ${correctCount} von ${askedCount} richtig (${percent}%)`;
-      document.getElementById('ergebnis').style.display = 'block';
-      document.getElementById('navigation').style.display = 'flex';
-    }
+function showResult() {
+  document.getElementById('frage').style.display = 'none';
+  document.getElementById('antworten').style.display = 'none';
+  const percent = Math.round((correctCount / askedCount) * 100);
+  const ergebnisDiv = document.getElementById('ergebnis');
+
+  let resultText = `Du hast ${correctCount} von ${askedCount} richtig (${percent}%)`;
+
+  if (wrongAnswers.length > 0) {
+    resultText += "<br><br><strong>Falsch beantwortete Fragen:</strong><ul>";
+    wrongAnswers.forEach(item => {
+      resultText += `<li><strong>Frage:</strong> ${item.question}<br>
+                     <strong>Deine Antwort:</strong> ${item.selected}<br>
+                     <strong>Richtige Antwort:</strong> ${item.correct}</li><br>`;
+    });
+    resultText += "</ul>";
+  }
+
+  ergebnisDiv.innerHTML = resultText;
+  ergebnisDiv.style.display = 'block';
+  document.getElementById('navigation').style.display = 'flex';
+}
 
     function restart() {
       used = [];
       correctCount = 0;
       askedCount = 0;
+      wrongAnswers = [];
       document.getElementById('ergebnis').style.display = 'none';
       document.getElementById('navigation').style.display = 'none';
       startQuiz(questions[0].level); // Restart with the same level
@@ -368,6 +390,7 @@
       used = [];
       correctCount = 0;
       askedCount = 0;
+      wrongAnswers = [];
       document.getElementById('frage').style.display = 'none';
       document.getElementById('antworten').style.display = 'none';
       document.getElementById('ergebnis').style.display = 'none';
