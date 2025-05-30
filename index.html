@@ -118,6 +118,13 @@ body {
     .level-auswahl button:hover {
       background-color: #004d40;
     }
+    #fortschritt {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+  color: #004d40;
+  font-weight: bold;
+}
   </style>
 </head>
 <body>
@@ -130,6 +137,7 @@ body {
     </div>
     <div class="frage" id="frage" style="display: none;"></div>
     <div class="antworten" id="antworten" style="display: none;"></div>
+    <div id="fortschritt" style="margin-top: 10px; font-size: 16px; text-align: center; color: #004d40;"></div>
     <div class="ergebnis" id="ergebnis"></div>
     <div class="navigation" id="navigation">
       <button onclick="restart()">Wiederholen</button>
@@ -335,6 +343,7 @@ body {
         return;
       }
       askedCount++;
+      document.getElementById('fortschritt').textContent = `Frage ${askedCount} / ${questions.length}`;
       const idx = getRandomIndex();
       const q = questions[idx];
       document.getElementById('frage').textContent = q.question;
