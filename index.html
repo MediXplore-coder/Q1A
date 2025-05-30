@@ -321,6 +321,30 @@ body {
 
     function startQuiz(selectedLevel) {
       questions = allQuestions.filter(q => q.level === selectedLevel);
+
+const saved = localStorage.getItem(`quizProgress_${selectedLevel}`);
+if (saved) {
+  const resume = confirm(`Du hast ein Quiz für "${selectedLevel}" begonnen. Fortsetzen?`);
+  if (resume) {
+    const data = JSON.parse(saved);
+    used = data.used || [];
+    correctCount = data.correctCount || 0;
+    askedCount = data.askedCount || 0;
+    wrongAnswers = data.wrongAnswers || [];
+  } else {
+    localStorage.removeItem(`quizProgress_${selectedLevel}`);
+    used = [];
+    correctCount = 0;
+    askedCount = 0;
+    wrongAnswers = [];
+  }
+} else {
+  used = [];
+  correctCount = 0;
+  askedCount = 0;
+  wrongAnswers = [];
+}
+
       document.getElementById('level-auswahl').style.display = 'none';
       document.getElementById('frage').style.display = 'block';
       document.getElementById('antworten').style.display = 'flex';
@@ -368,8 +392,8 @@ btn.onclick = () => {
       Array.from(container.children)[q.correct].classList.add('correct');
     }, 100);
   }
-  setTimeout(showNext, 1000);
   saveProgress(); //zum Speichern vom Quizfortschritt
+  setTimeout(showNext, 1000); 
 };
         container.appendChild(btn);
       });
@@ -398,8 +422,10 @@ function showResult() {
   document.getElementById('navigation').style.display = 'flex';
 }
 
+    
+
     function restart() {
-      localStorage.removeItem('quizProgress');
+      localStorage.removeItem(`quizProgress_${questions[0]?.level}`);I
 
       
       used = [];
@@ -425,16 +451,17 @@ function showResult() {
       document.getElementById('level-auswahl').style.display = 'flex';
     }
     //Die Funktion zum Speichern vom Quizfortschritt
-    function saveProgress() {
-  const progress = {
-    level: questions[0]?.level || '',
-    used,
-    correctCount,
-    askedCount,
-    wrongAnswers
-  };
-  localStorage.setItem('quizProgress', JSON.stringify(progress));
-}
+      function saveProgress() {
+        const level = questions[0]?.level || '';
+        const progress = {
+          used,
+          correctCount,
+          askedCount,
+          wrongAnswers
+        };
+        localStorage.setItem(`quizProgress_${level}`, JSON.stringify(progress));
+      }
+
     
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('quizProgress');
