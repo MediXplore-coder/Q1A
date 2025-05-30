@@ -360,6 +360,7 @@ btn.onclick = () => {
     }, 100);
   }
   setTimeout(showNext, 1000);
+  saveProgress(); //zum Speichern vom Quizfortschritt
 };
         container.appendChild(btn);
       });
@@ -389,6 +390,9 @@ function showResult() {
 }
 
     function restart() {
+      localStorage.removeItem('quizProgress');
+
+      
       used = [];
       correctCount = 0;
       askedCount = 0;
@@ -399,6 +403,8 @@ function showResult() {
     }
 
     function Levels() {
+      localStorage.removeItem('quizProgress');
+
       used = [];
       correctCount = 0;
       askedCount = 0;
@@ -409,6 +415,40 @@ function showResult() {
       document.getElementById('navigation').style.display = 'none';
       document.getElementById('level-auswahl').style.display = 'flex';
     }
+    //Die Funktion zum Speichern vom Quizfortschritt
+    function saveProgress() {
+  const progress = {
+    level: questions[0]?.level || '',
+    used,
+    correctCount,
+    askedCount,
+    wrongAnswers
+  };
+  localStorage.setItem('quizProgress', JSON.stringify(progress));
+}
+    
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('quizProgress');
+  if (saved) {
+    const resume = confirm("Willst du dein Quiz fortsetzen?");
+    if (resume) {
+      const data = JSON.parse(saved);
+      questions = allQuestions.filter(q => q.level === data.level);
+      used = data.used || [];
+      correctCount = data.correctCount || 0;
+      askedCount = data.askedCount || 0;
+      wrongAnswers = data.wrongAnswers || [];
+      
+      document.getElementById('level-auswahl').style.display = 'none';
+      document.getElementById('frage').style.display = 'block';
+      document.getElementById('antworten').style.display = 'flex';
+      showNext();
+    } else {
+      localStorage.removeItem('quizProgress');
+    }
+  }
+});
+
   </script>
 </body>
 </html>
